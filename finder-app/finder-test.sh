@@ -2,6 +2,12 @@
 # Tester script for assignment 1 and assignment 2
 # Author: Siddhant Jajoo
 
+#cleaning prior build files
+make -C "$(dirname "$0")" clean || true
+
+#build writer.c
+make -C "$(dirname "$0")"
+
 set -e
 set -u
 
@@ -9,6 +15,7 @@ NUMFILES=10
 WRITESTR=AELD_IS_FUN
 WRITEDIR=/tmp/aeld-data
 username=$(cat conf/username.txt)
+WRITEFILE=
 
 if [ $# -lt 3 ]
 then
@@ -48,13 +55,15 @@ then
 		exit 1
 	fi
 fi
-#echo "Removing the old writer utility and compiling as a native application"
+echo "Removing the old writer utility and compiling as a native application"
 #make clean
 #make
 
 for i in $( seq 1 $NUMFILES)
 do
-	./writer.sh "$WRITEDIR/${username}$i.txt" "$WRITESTR"
+	WRITEFILE="$WRITEDIR/${username}$i.txt"
+	
+	"$(dirname "$0")/writer" "$WRITEFILE" "$WRITESTR"
 done
 
 OUTPUTSTRING=$(./finder.sh "$WRITEDIR" "$WRITESTR")
